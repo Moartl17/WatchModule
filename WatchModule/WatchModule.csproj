@@ -143,6 +143,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Files\Starte Uhr.bat" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -158,6 +159,8 @@
     </Content>
     <Resource Include="Images\plus.png" />
     <Resource Include="Images\minus.png" />
+    <Content Include="Files\cmdow.exe" />
+    <Content Include="Files\Logorotation_2021.m4v" />
     <Content Include="Sounds\goal.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

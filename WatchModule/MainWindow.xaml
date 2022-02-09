@@ -1,0 +1,427 @@
+﻿<Window x:Class="WatchModule.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:WatchModule.Converter"
+        Title="Haupt Fenster" Height="800" Width="1200" Background="Black" KeyDown="Window_KeyDown" Icon="watch.ico">
+    <Grid>
+        <Grid.Resources>
+            <conv:DurationToDisplayableDurationConverter x:Key="durationToDisplayableDurationConverter" />
+            <conv:DurationToMinutesConverter x:Key="durationToMinutesConverter" />
+            <conv:DurationToSecondsConverter x:Key="durationToSecondsConverter" />
+            <conv:DurationToMinutesContinousConverter x:Key="durationToMinutesContinousConverter" />
+            <conv:DurationToSecondsContinousConverter x:Key="durationToSecondsContinousConverter" />
+            <conv:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            <conv:CurrentPeriodConverter x:Key="currentPeriodConverter" />
+            <conv:IsClockRunningToColorConverter x:Key="isClockRunningToColorConverter" />
+
+            <SolidColorBrush Color="#FF00A2FF" x:Key="mainBrush" />
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource mainBrush}"/>
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="penaltyTextBlock" >
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="FontSize" Value="40" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="timeTextBlock">
+                <Setter Property="Foreground" Value="{StaticResource mainBrush}"/>
+                <Setter Property="FontSize" Value="150" />
+                <Setter Property="Margin" Value="20" />
+                <Setter Property="Background" Value="Black" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource timeTextBlock}" x:Key="timeoutTextBlock">
+                <Setter Property="FontSize" Value="50" />
+                <Setter Property="Foreground" Value="Green" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Style>
+            <Style TargetType="TextBox" x:Key="teamNameTextBox" >
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="FontSize" Value="30" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+            <Style TargetType="TextBox" x:Key="goalsTextBox">
+                <Setter Property="FontSize" Value="100" />
+                <Setter Property="Foreground" Value="#FFF3FF00" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+            <Style TargetType="TextBox" x:Key="playerNumberTextBox">
+                <Setter Property="Foreground" Value="Green" />
+                <Setter Property="Margin" Value="5,1" />
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="FontSize" Value="40" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Width" Value="50" />
+                <Setter Property="Margin" Value="10,0,10,0" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="durationTextBlock">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="5,1" />
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="FontSize" Value="40" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Style>
+        </Grid.Resources>
+
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50" />
+            <RowDefinition Height=".5*" />
+            <RowDefinition Height="180" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="mainClockAndPenalties" Grid.ColumnSpan="4" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="homePenalties" Margin="10">
+                <StackPanel >
+                    <TextBlock Text="STRAFZEITEN" Style="{StaticResource penaltyTextBlock}"/>
+                    <ListView ItemsSource="{Binding HomePenalties}" Background="Transparent" BorderThickness="0" SelectedItem="{Binding SelectedHomePenalty, Mode=TwoWay}">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Style.Triggers>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter Property="IsSelected" Value="True"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Background="Black">
+                                    <TextBox Text="{Binding PlayerNumber, Mode=TwoWay}" Style="{StaticResource playerNumberTextBox}" />
+                                    <TextBlock Text="{Binding RemainingDuration, Converter={StaticResource durationToDisplayableDurationConverter}, Mode=TwoWay}" Style="{StaticResource durationTextBlock}" />
+                                    <Button Content="X" MaxHeight="20" Foreground="Red" Margin="5,0" Command="{Binding Path=DataContext.RemoveSelectedHomePenaltyCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                    <Button Content="Zeit stellen" MaxHeight="20" Foreground="Red"  Margin="5,0" Command="{Binding Path=DataContext.EditSelectedHomePenaltyCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition  Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Background="{Binding IsClockRunning, Converter={StaticResource isClockRunningToColorConverter}}"  Grid.ColumnSpan="3"  />
+                <TextBlock Style="{StaticResource timeTextBlock}" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource durationToMinutesContinousConverter}">
+                            <Binding Path="Clock.ElapsedTimeSpan" />
+                            <Binding Path="IsCurrentlyPause" />
+                            <Binding Path="PeriodDuration" />
+                            <Binding Path="CurrentPeriod" />
+                            <Binding Path="IsCurrentlyInOvertime" />
+                            <Binding Path="OvertimeDuration" />
+                            <Binding Path="CurrentOvertimePeriod" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <!-- Pause Minutes -->
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource timeTextBlock}"
+                            Visibility="{Binding IsCurrentlyPause, Converter={StaticResource booleanToVisibilityConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource durationToMinutesConverter}">
+                            <Binding Path="Clock.ElapsedTimeSpan" />
+                            <Binding Path="RunDownwards" />
+                            <Binding Path="IsCurrentlyPause" />
+                            <Binding Path="PeriodDuration" />
+                            <Binding Path="PauseDuration" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Border Background="Black" Grid.Column="1" >
+                    <TextBlock Text=":" Style="{StaticResource timeTextBlock}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource timeTextBlock}" VerticalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource durationToSecondsContinousConverter}">
+                            <Binding Path="Clock.ElapsedTimeSpan" />
+                            <Binding Path="IsCurrentlyPause" />
+                            <Binding Path="PeriodDuration" />
+                            <Binding Path="CurrentPeriod" />
+                            <Binding Path="IsCurrentlyInOvertime" />
+                            <Binding Path="OvertimeDuration" />
+                            <Binding Path="CurrentOvertimePeriod" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <!-- Pause Seconds-->
+                <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource timeTextBlock}"  
+                           Visibility="{Binding IsCurrentlyPause, Converter={StaticResource booleanToVisibilityConverter}}" >
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource durationToSecondsConverter}">
+                            <Binding Path="Clock.ElapsedTimeSpan" />
+                            <Binding Path="RunDownwards" />
+                            <Binding Path="IsCurrentlyPause" />
+                            <Binding Path="PeriodDuration" />
+                            <Binding Path="PauseDuration" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <!-- Timeout Seconds -->
+                <TextBlock Grid.ColumnSpan="3" Style="{StaticResource timeoutTextBlock}" HorizontalAlignment="Center"  Margin="20" Text="{Binding TimeoutSeconds}"
+                       Visibility="{Binding TimeoutVisibility}" Grid.Row="1" />
+
+            </Grid>
+
+            <Border x:Name="awayPenalties"  Margin="10" Grid.Column="4">
+                <StackPanel >
+                    <TextBlock Text="STRAFZEITEN" Style="{StaticResource penaltyTextBlock}" />
+                    <ListView ItemsSource="{Binding AwayPenalties}" Background="Transparent" SelectedItem="{Binding SelectedAwayPenalty}" BorderThickness="0" IsHitTestVisible="True">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Style.Triggers>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter Property="IsSelected" Value="True"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Background="Transparent" >
+                                    <TextBox Text="{Binding PlayerNumber, Mode=TwoWay}" Style="{StaticResource playerNumberTextBox}"/>
+                                    <TextBlock Text="{Binding RemainingDuration,Converter={StaticResource durationToDisplayableDurationConverter}, Mode=TwoWay}" Style="{StaticResource durationTextBlock}"/>
+                                    <Button Content="X" MaxHeight="20" Foreground="Red"  Margin="5,0" Command="{Binding Path=DataContext.RemoveSelectedAwayPenaltyCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                    <Button Content="Zeit stellen" MaxHeight="20" Foreground="Red"  Margin="5,0" Command="{Binding Path=DataContext.EditSelectedAwayPenaltyCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="Teams" Grid.Row="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="homeTeamTextBox" Text="{Binding HomeTeam, Mode=TwoWay}" Style="{StaticResource teamNameTextBox}"/>
+            <TextBox x:Name="awayTeamTextBox" Grid.Column="1" Text="{Binding AwayTeam, Mode=TwoWay}" Style="{StaticResource teamNameTextBox}"/>
+        </Grid>
+
+        <Border Grid.Row="3" Grid.ColumnSpan="3" Margin="5" >
+            <Grid x:Name="ScoresAndPeriods"   >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <TextBox x:Name="ScoreHomeTeam" Text="{Binding HomeGoals, Mode=TwoWay}" Style="{StaticResource goalsTextBox}" Margin="5"/>
+                    <StackPanel VerticalAlignment="Center" Margin="0,5,0,0">
+                        <Button Height="50" Width="50" Command="{Binding AddHomeGoalCommand}" Margin="5" Background="Transparent" BorderThickness="0">
+                            <Button.Content>
+                                <Image Source="Images/plus.png" />
+                            </Button.Content>
+                        </Button>
+                        <Button Command="{Binding SubtractHomeGoalCommand}" Width="50" Height="50" Margin="5" Background="Transparent" BorderThickness="0">
+                            <Button.Content>
+                                <Image Source="Images/minus.png" />
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="PERIOD" Style="{StaticResource penaltyTextBlock}"/>
+                    <TextBlock Grid.Row="1" Style="{StaticResource penaltyTextBlock}">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource currentPeriodConverter}">
+                                <Binding Path="CurrentPeriod" />
+                                <Binding Path="IsCurrentlyInOvertime" />
+                                <Binding Path="CurrentOvertimePeriod" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <Border Grid.Row="2" Margin="5,0">
+                        <TextBlock Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold">
+                            <TextBlock.Inlines>
+                                <Run Foreground="Red" Text="Pflanz-" />
+                                <Run Foreground="Green" Text="Arena" />
+                                <Run Foreground="{StaticResource mainBrush}" Text=".de" />
+                            </TextBlock.Inlines>
+                        </TextBlock>
+                    </Border>
+                </Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="2" >
+                    <TextBox x:Name="ScoreAwayTeam" Text="{Binding AwayGoals, Mode=TwoWay}" Style="{StaticResource goalsTextBox}"/>
+                    <StackPanel VerticalAlignment="Center" Margin="0,5,0,0" >
+                        <Button Height="50" Width="50" Command="{Binding AddAwayGoalCommand}" Margin="5" Background="Transparent" BorderThickness="0">
+                            <Button.Content>
+                                <Image Source="Images/plus.png" />
+                            </Button.Content>
+                        </Button>
+                        <Button Command="{Binding SubtractAwayGoalCommand}" Width="50" Height="50" Margin="5" Background="Transparent" BorderThickness="0">
+                            <Button.Content>
+                                <Image Source="Images/minus.png" />
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid x:Name="NavigationButtons" Grid.Row="4" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".75*"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width=".75*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Margin="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                    <Button Command="{Binding AddHomeTwoMinPenaltyCommand}" Width="60" Height="50" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F1" HorizontalAlignment="Center"/>
+                                <TextBlock Text="2 min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding AddHomeFiveMinPenaltyCommand}" Width="60" Height="50" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F2" HorizontalAlignment="Center"/>
+                                <TextBlock Text="5 min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding AddHomeCustomPenaltyCommand}" Width="60" Height="50" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F3" HorizontalAlignment="Center"/>
+                                <TextBlock Text="X min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+
+                </StackPanel>
+                <WrapPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Drittellänge:" Foreground="White" Margin="1" Width="120" />
+                        <TextBox Text="{Binding PeriodDuration, Mode=TwoWay}" Width="80" Margin="1"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Anzahl an Dritteln:" Foreground="White" Margin="1" Width="120" />
+                        <TextBox Text="{Binding NumberOfPeriods, Mode=TwoWay}" Width="80" Margin="1"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Drittelpause:" Foreground="White" Margin="1" Width="120" />
+                        <TextBox Text="{Binding PauseDuration, Mode=TwoWay}" Width="80" Margin="1"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <CheckBox Content="Strafzeiten halbieren" Foreground="White" Margin="3" IsChecked="{Binding DivideAllPenaltiesByTwo}" />
+                    </StackPanel>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <CheckBox Content="Bambinimodus:" Foreground="White" Margin="3" Width="113" IsChecked="{Binding IsInBambiniMode}" />
+                        <TextBox Text="{Binding BambiniShiftDuration, Mode=TwoWay}" Width="80" Margin="3"/>
+                    </StackPanel>
+                   
+                </WrapPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox x:Name="chkRunDownwards" Content="Runter laufen (F12)" IsChecked="{Binding RunDownwards}" Foreground="White" Margin="3" HorizontalAlignment="Center"/>
+                    
+                </StackPanel>
+                <Button Content="Start/Stop" Height="60"  Command="{Binding StartStopCommand}" Margin="3" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Drittelpause beenden" MaxHeight="30" Width="150" Command="{Binding CancelPauseCommand}" Margin="5"/>
+                    <Button Content="Videowürfelanzeige öffnen" Margin="5" Padding="3" MaxHeight="30" MaxWidth="200" Command="{Binding OpenDisplayWindowCommand}" />
+                    <Button Content="Auszeit" Command="{Binding TimeoutCommand}" Padding="3" Width="75" Margin="5"/>
+                    <Button Content="Neues Spiel" Command="{Binding NewGameCommand}" Padding="3" Width="75" Margin="5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Sirene" MaxHeight="30" MinWidth="85" Command="{Binding PlaySoundCommand}" Margin="5"/>
+                    <Button Content="Goal Horn" MaxHeight="30" MinWidth="85" Command="{Binding PlayGoalHornCommand}" Margin="5"/>
+                    <Button Content="Uhr stellen" Margin="5" MaxHeight="30" MaxWidth="200" Padding="3" Command="{Binding SetClockCommand}" />
+                    <Button Content="Start Werbung" MaxHeight="30" MinWidth="100" Command="{Binding StartAppSwitcherCommand}" Margin="5"/>
+                    <Button Content="Stop Werbung" MaxHeight="30" MinWidth="100" Command="{Binding StopAppSwitcherCommand}" Margin="5"/>
+                </StackPanel>
+
+            </StackPanel>
+            <StackPanel Grid.Column="2" Margin="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                    <Button Command="{Binding AddAwayTwoMinPenaltyCommand}" Width="60" Height="50" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F5" HorizontalAlignment="Center"/>
+                                <TextBlock Text="2 min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding AddAwayFiveMinPenaltyCommand}" Width="60" Height="50" Margin="5" >
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F6" HorizontalAlignment="Center"/>
+                                <TextBlock Text="5 min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding AddAwayCustomPenaltyCommand}" Width="60" Height="50" Margin="5">
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="F7" HorizontalAlignment="Center"/>
+                                <TextBlock Text="X min" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="OT Drittellänge:" Foreground="White" Margin="3" Width="120" />
+                    <TextBox Text="{Binding OvertimeDuration, Mode=TwoWay}" Width="80" Margin="3" IsEnabled="{Binding IsCurrentlyInOvertime}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="OT Anzahl an Dritteln:" Foreground="White" Margin="3" Width="120" />
+                    <TextBox Text="{Binding NumberOfOvertimePeriods, Mode=TwoWay}" Width="80" Margin="3" IsEnabled="{Binding IsCurrentlyInOvertime}"/>
+                </StackPanel>
+                <StackPanel>
+                    <CheckBox Content="Overtime" IsChecked="{Binding IsCurrentlyInOvertime}" IsEnabled="{Binding IsOvertimeOptionEnabled}" Foreground="White" Margin="3" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

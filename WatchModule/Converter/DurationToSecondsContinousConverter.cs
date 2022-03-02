@@ -45,7 +45,7 @@ namespace WatchModule.Converter
 
                    #endregion
 
-                   Debug.WriteLine("From Seconds Converter: EllapseTime = " + timeSpan.Add(expiredTime).ToString());
+                   //Debug.WriteLine("From Seconds Converter: EllapseTime = " + timeSpan.Add(expiredTime).ToString());
                    return (timeSpan.Add(expiredTime)).ToString("ss");
                }
            }

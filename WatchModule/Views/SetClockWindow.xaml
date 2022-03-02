@@ -4,7 +4,8 @@
         xmlns:behaviors="clr-namespace:WatchModule.Helpers"
         Title="SetClockWindow" Height="250" Width="300" Loaded="Window_Loaded">
     <StackPanel>
-        <TextBlock Text="Hier immer nur die abgelaufende Zeit IM AKTUELLEN DRITTEL angeben. Also z.B. bei Minute 35:07 ==> 15:07 eingeben!"  TextWrapping="Wrap" Margin="3"/>
+        <TextBlock Text="Für Uhrzeit stellen: Hier immer nur die abgelaufende Zeit IM AKTUELLEN DRITTEL angeben. Also z.B. bei Minute 35:07 ==> 15:07 eingeben!"  TextWrapping="Wrap" Margin="3"/>
+        <TextBlock Text=" Für Strafzeit immer die verbleibende Zeit eingeben!"  TextWrapping="Wrap" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />

@@ -566,7 +566,9 @@ namespace WatchModule.ViewModels
                                     currentNumberOfShiftInBambiniMode++;
                             }
 
-                            StartAppSwitcherCommand.Execute(new object());
+                            //  Run only if Media Player is active
+                            if(IsMediaPlayerWindowOpen())
+                                StartAppSwitcherCommand.Execute(new object());
 
                             CommandManager.InvalidateRequerySuggested();
                         }
@@ -645,6 +647,9 @@ namespace WatchModule.ViewModels
 
                         StopAppSwitcherCommand.Execute(new object());
 
+                        //  Activate MainWindow:
+                        OpenDisplayWindowCommand.Execute(null);
+
                         CommandManager.InvalidateRequerySuggested();
                     }
 
@@ -654,6 +659,11 @@ namespace WatchModule.ViewModels
             }
         }
 
+        public bool IsMediaPlayerWindowOpen()
+        {
+            Process[] runningProcesses = Process.GetProcesses();
+            return runningProcesses.Select(x => x.ProcessName.ToLowerInvariant()).Contains("wmplayer");
+        }
 
 
         #region Commands

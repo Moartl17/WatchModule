@@ -155,6 +155,15 @@ namespace WatchModuleTests
 
             //Assert.AreEqual(newTime.Add(new TimeSpan(0, 0, 2)), target.Clock.ElapsedTimeSpan);
         }
+
+        [TestMethod]
+        public void IsMediaPlayerRunning_Test()
+        {
+            var isRunning = target.IsMediaPlayerWindowOpen();
+            
+
+            Assert.IsTrue(isRunning);
+        }
     }
 }
 

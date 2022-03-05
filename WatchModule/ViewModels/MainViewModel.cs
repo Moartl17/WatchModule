@@ -662,7 +662,7 @@ namespace WatchModule.ViewModels
         public bool IsMediaPlayerWindowOpen()
         {
             Process[] runningProcesses = Process.GetProcesses();
-            return runningProcesses.Select(x => x.ProcessName.ToLowerInvariant()).Contains("wmplayer");
+            return runningProcesses.Select(x => x.ProcessName.ToLowerInvariant()).Contains("wmplayer") || runningProcesses.Select(x => x.ProcessName.ToLowerInvariant()).Contains("Video.UI");
         }
 
 

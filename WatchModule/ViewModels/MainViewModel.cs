@@ -465,7 +465,7 @@ namespace WatchModule.ViewModels
             AllPenalties = new Dictionary<int, PenaltyInfo>();
             Clock = new StopWatchWithOffset();
             dt.Tick += new EventHandler(dt_Tick);
-            dt.Interval = TimeSpan.FromMilliseconds(100);
+            dt.Interval = TimeSpan.FromMilliseconds(10);
             CurrentPeriod = 1;
             IsCurrentlyPause = false;
             HomeTeam = "Pflanz";
@@ -549,13 +549,13 @@ namespace WatchModule.ViewModels
 
                     if (!IsCurrentlyInOvertime) // && !IsInBambiniMode)
                     {
-                        //Debug.WriteLine("Ellapsed: " + Clock.ElapsedTimeSpan.ToString());
+                        Debug.WriteLine("Ellapsed: " + Clock.ElapsedTimeSpan.ToString());
 
                         //  Check if period end time is reached
-                        if (Clock.ElapsedTimeSpan >= PeriodDuration)
+                        if (Clock.ElapsedTimeSpan > PeriodDuration)
                         {
-                            StopClock();
                             PlaySound();
+                            StopClock();
                             if (CurrentPeriod < NumberOfPeriods)
                             {
                                 IsCurrentlyPause = true;

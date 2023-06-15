@@ -567,7 +567,7 @@ namespace WatchModule.ViewModels
                             }
 
                             //  Run only if Media Player is active
-                            if(IsMediaPlayerWindowOpen())
+                            if (IsMediaPlayerWindowOpen())
                                 StartAppSwitcherCommand.Execute(new object());
 
                             CommandManager.InvalidateRequerySuggested();
@@ -626,7 +626,7 @@ namespace WatchModule.ViewModels
 
                 else
                 {
-                    if (PauseDuration >= new TimeSpan(0, 5, 0) && !_soundAlreadyPlayed && Clock.ElapsedTimeSpan >= PauseDuration.Subtract(new TimeSpan(0, 1, 30)))
+                    if (PauseDuration >= new TimeSpan(0, 5, 0) && !_soundAlreadyPlayed && Clock.ElapsedTimeSpan >= PauseDuration.Subtract(new TimeSpan(0, 2, 0)))
                     {
                         PlaySound();
                         _soundAlreadyPlayed = true;
@@ -976,7 +976,7 @@ namespace WatchModule.ViewModels
             if (dialogResult.HasValue && dialogResult.Value)
             {
                 selectedPenalty.Stopwatch.ElapsedTimeSpan = new TimeSpan(0, vm.MinutesCalculated, vm.SecondsCalculated);
-                selectedPenalty.RemainingDuration = selectedPenalty.Duration.Subtract(selectedPenalty.Stopwatch.ElapsedTimeSpan.Subtract(new TimeSpan(0,0,0,0,999)));
+                selectedPenalty.RemainingDuration = selectedPenalty.Duration.Subtract(selectedPenalty.Stopwatch.ElapsedTimeSpan.Subtract(new TimeSpan(0, 0, 0, 0, 999)));
             }
 
             OnPropertyChanged("HomePenalties");
@@ -999,33 +999,46 @@ namespace WatchModule.ViewModels
 
         private void OpenDisplayWindow()
         {
-            if (displayWindow == null)
+            bool displayWindowAlreadyActive = displayWindow != null;
+
+            if (!displayWindowAlreadyActive)
             {
                 displayWindow = new DisplayWindow();
                 displayWindow.WindowWasClosed += displayWindow_WindowWasClosed;
                 displayWindow.DataContext = this;
-
-                displayWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-
-                Debug.Assert(SystemInformation.MonitorCount > 1);
-
-                if (SystemInformation.MonitorCount > 1)
-                {
-                    Rectangle workingArea = Screen.AllScreens[1].WorkingArea;
-                    displayWindow.Left = workingArea.Left;
-                    displayWindow.Top = workingArea.Top;
-                    displayWindow.Width = workingArea.Width;
-                    displayWindow.Height = workingArea.Height;
-                }
-
-                //displayWindow.WindowState = WindowState.Maximized;
-                displayWindow.WindowStyle = WindowStyle.None;
-                //displayWindow.Topmost = true;
-                displayWindow.Show();
             }
 
-            else
+            displayWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            Debug.Assert(SystemInformation.MonitorCount > 1);
+
+            if (SystemInformation.MonitorCount > 1)
+            {
+                Rectangle workingArea = Screen.AllScreens[1].WorkingArea;
+                displayWindow.Left = workingArea.Left;
+                displayWindow.Top = workingArea.Top;
+                displayWindow.Width = workingArea.Width;
+                displayWindow.Height = workingArea.Height;
+            }
+
+            //displayWindow.WindowState = WindowState.Maximized;
+            displayWindow.WindowStyle = WindowStyle.None;
+            //displayWindow.Topmost = true;
+
+
+            if (displayWindowAlreadyActive)
+            {
                 displayWindow.Activate();
+                displayWindow.Topmost = true;
+                displayWindow.Topmost = false;
+                bool result = displayWindow.Focus();
+                Debug.Print("Aktivierung Display Window Ergebnis: " + result);
+            }
+            else
+                displayWindow.Show();
+
+
+
         }
 
         void displayWindow_WindowWasClosed(object sender, EventArgs e)

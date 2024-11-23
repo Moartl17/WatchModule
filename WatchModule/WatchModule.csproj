@@ -164,7 +164,9 @@
     <Content Include="Files\cmdow.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\Logorotation_2021.m4v" />
+    <Content Include="Files\Logorotation_2023.m4v">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Sounds\goal.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
